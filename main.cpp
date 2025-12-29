@@ -15,6 +15,7 @@
 
 #include "model.h"
 #include "shader_program.h"
+#include <iostream>
 
 #define WINDOW_HEIGHT 720
 #define WINDOW_WIDTH 1280
@@ -87,6 +88,7 @@ Model loadModelFromFile(const char* meshPath) {
 }
 
 int main() {
+    cout << "testing ";
     ContextSettings ctxSettings;
     ctxSettings.minorVersion = 3;
     ctxSettings.majorVersion = 3;
