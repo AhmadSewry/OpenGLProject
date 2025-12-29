@@ -1,0 +1,26 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name>hello-texture</Name>
+    <Description>&lt;No description available&gt;</Description>
+    <ProjectType>VC</ProjectType>
+    <ProjectSubType>
+    </ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>hello-texture</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <Icon>__TemplateIcon.ico</Icon>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="opengl-boilerplate.vcxproj" File="opengl-boilerplate.vcxproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="false" TargetFileName="$projectname$.vcxproj.filters">opengl-boilerplate.vcxproj.filters</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="main.cpp">main.cpp</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="model.cpp">model.cpp</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="shader_program.cpp">shader_program.cpp</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="model.h">model.h</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="shader_program.h">shader_program.h</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>
