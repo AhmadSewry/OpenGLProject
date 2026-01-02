@@ -60,102 +60,65 @@ GLuint loadCubemap(vector<std::string> faces) {
     return textureID;
 }
 
-// œ«·… —”„ «·„—»⁄ ( „  ⁄œÌ·Â« · ﬁ»· ≈Õœ«ÀÌ«  UV „Œ’’…)
 void addQuad(vector<vec3>& positions, vector<vec2>& uvs, vec3 p1, vec3 p2, vec3 p3, vec3 p4, vec2 uvMin, vec2 uvMax) {
     positions.push_back(p1); positions.push_back(p2); positions.push_back(p4);
     uvs.push_back(uvMin); uvs.push_back({ uvMax.x, uvMin.y }); uvs.push_back({ uvMin.x, uvMax.y });
-
     positions.push_back(p2); positions.push_back(p3); positions.push_back(p4);
     uvs.push_back({ uvMax.x, uvMin.y }); uvs.push_back(uvMax); uvs.push_back({ uvMin.x, uvMax.y });
 }
 
-// œ«·… ·≈÷«›… „ﬂ⁄» „⁄  ÕœÌœ „‰ÿﬁ… «··Ê‰
-// uvMin Ê uvMax ÌÕœœ«‰ √Ì Ã“¡ „‰ «·’Ê—… ”‰” Œœ„
 void addBox(vector<vec3>& positions, vector<vec2>& uvs, vec3 center, vec3 size, vec2 uvMin, vec2 uvMax) {
-    float w = size.x / 2.0f;
-    float h = size.y / 2.0f;
-    float d = size.z / 2.0f;
-
-    vec3 p1 = center + vec3(-w, -h, d);
-    vec3 p2 = center + vec3(w, -h, d);
-    vec3 p3 = center + vec3(w, h, d);
-    vec3 p4 = center + vec3(-w, h, d);
-    vec3 p5 = center + vec3(-w, -h, -d);
-    vec3 p6 = center + vec3(w, -h, -d);
-    vec3 p7 = center + vec3(w, h, -d);
-    vec3 p8 = center + vec3(-w, h, -d);
-
-    // ‰„—— uvMin Ê uvMax ·ﬂ· ÊÃÂ
-    addQuad(positions, uvs, p1, p2, p3, p4, uvMin, uvMax); // Front
-    addQuad(positions, uvs, p6, p5, p8, p7, uvMin, uvMax); // Back
-    addQuad(positions, uvs, p2, p6, p7, p3, uvMin, uvMax); // Right
-    addQuad(positions, uvs, p5, p1, p4, p8, uvMin, uvMax); // Left
-    addQuad(positions, uvs, p4, p3, p7, p8, uvMin, uvMax); // Top
-    addQuad(positions, uvs, p5, p6, p2, p1, uvMin, uvMax); // Bottom
+    float w = size.x / 2.0f; float h = size.y / 2.0f; float d = size.z / 2.0f;
+    vec3 p1 = center + vec3(-w, -h, d); vec3 p2 = center + vec3(w, -h, d); vec3 p3 = center + vec3(w, h, d); vec3 p4 = center + vec3(-w, h, d);
+    vec3 p5 = center + vec3(-w, -h, -d); vec3 p6 = center + vec3(w, -h, -d); vec3 p7 = center + vec3(w, h, -d); vec3 p8 = center + vec3(-w, h, -d);
+    addQuad(positions, uvs, p1, p2, p3, p4, uvMin, uvMax); addQuad(positions, uvs, p6, p5, p8, p7, uvMin, uvMax);
+    addQuad(positions, uvs, p2, p6, p7, p3, uvMin, uvMax); addQuad(positions, uvs, p5, p1, p4, p8, uvMin, uvMax);
+    addQuad(positions, uvs, p4, p3, p7, p8, uvMin, uvMax); addQuad(positions, uvs, p5, p6, p2, p1, uvMin, uvMax);
 }
 
-// œ«·… »‰«¡ «·”Ì«—… «·„·Ê‰…
 Model createCarModel() {
-    vector<vec3> pos;
-    vector<vec2> uvs;
-
-    //  ⁄—Ì› „‰«ÿﬁ «·√·Ê«‰ ›Ì «·’Ê—… «· Ì ”‰’‰⁄Â« (Ì”«— √Õ„—° Ì„Ì‰ √”Êœ)
-    vec2 redUV_Min = { 0.0f, 0.0f };
-    vec2 redUV_Max = { 0.5f, 1.0f }; // «·‰’› «·√Ì”—
-
-    vec2 blackUV_Min = { 0.5f, 0.0f };
-    vec2 blackUV_Max = { 1.0f, 1.0f }; // «·‰’› «·√Ì„‰
-
-    // 1. Ã”„ «·”Ì«—… (√Õ„—)
+    vector<vec3> pos; vector<vec2> uvs;
+    vec2 redUV_Min = { 0.0f, 0.0f }; vec2 redUV_Max = { 0.5f, 1.0f };
+    vec2 blackUV_Min = { 0.5f, 0.0f }; vec2 blackUV_Max = { 1.0f, 1.0f };
     addBox(pos, uvs, vec3(0.0f, 0.5f, 0.0f), vec3(2.5f, 1.0f, 5.0f), redUV_Min, redUV_Max);
-
-    // 2. «·”ﬁ› (√Õ„—)
     addBox(pos, uvs, vec3(0.0f, 1.3f, -0.2f), vec3(2.0f, 0.8f, 2.5f), redUV_Min, redUV_Max);
-
-    // 3. «·⁄Ã·«  (√”Êœ)
-    float wheelY = 0.2f;
-    float wheelX = 1.3f;
-    float wheelZ = 1.8f;
-    vec3 wheelSize = vec3(0.4f, 0.6f, 0.8f);
-
-    addBox(pos, uvs, vec3(wheelX, wheelY, wheelZ), wheelSize, blackUV_Min, blackUV_Max);
-    addBox(pos, uvs, vec3(-wheelX, wheelY, wheelZ), wheelSize, blackUV_Min, blackUV_Max);
-    addBox(pos, uvs, vec3(wheelX, wheelY, -wheelZ), wheelSize, blackUV_Min, blackUV_Max);
-    addBox(pos, uvs, vec3(-wheelX, wheelY, -wheelZ), wheelSize, blackUV_Min, blackUV_Max);
-
+    float wY = 0.2f, wX = 1.3f, wZ = 1.8f; vec3 wS = vec3(0.4f, 0.6f, 0.8f);
+    addBox(pos, uvs, vec3(wX, wY, wZ), wS, blackUV_Min, blackUV_Max); addBox(pos, uvs, vec3(-wX, wY, wZ), wS, blackUV_Min, blackUV_Max);
+    addBox(pos, uvs, vec3(wX, wY, -wZ), wS, blackUV_Min, blackUV_Max); addBox(pos, uvs, vec3(-wX, wY, -wZ), wS, blackUV_Min, blackUV_Max);
     return Model(pos, uvs);
 }
 
-// œ«·… ÃœÌœ… ﬂ·Ì«:  ’‰⁄ ’Ê—…  ·ÊÌ‰ «·”Ì«—… »—„ÃÌ«
-GLuint createCarColorTexture() {
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    // ”‰’‰⁄ „’›Ê›… √·Ê«‰ ÌœÊÌ…: 2 »ﬂ”· ⁄—÷ ◊ 1 »ﬂ”· ÿÊ·
-    // «·»ﬂ”· «·√Ê·: √Õ„— (255, 0, 0)
-    // «·»ﬂ”· «·À«‰Ì: √”Êœ (0, 0, 0) (√Ê —„«œÌ €«„ﬁ ·ÌﬂÊ‰ √Ã„·)
-    unsigned char data[] = {
-        255, 0, 0, 255,   // Red Pixel (RGBA)
-        30, 30, 30, 255   // Dark Grey Pixel (RGBA)
-    };
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-    // ≈⁄œ«œ«  «· ‰⁄Ì„ (Nearest · »ﬁÏ «·√·Ê«‰ Õ«œ… Ê·«  Œ ·ÿ)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
+GLuint createColorTexture(unsigned char r, unsigned char g, unsigned char b) {
+    GLuint textureID; glGenTextures(1, &textureID); glBindTexture(GL_TEXTURE_2D, textureID);
+    unsigned char data[] = { r, g, b, 255 };
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     return textureID;
 }
 
-GLuint generateTexture(const char* imagePath) {
+GLuint createCarColorTexture() {
+    GLuint textureID; glGenTextures(1, &textureID); glBindTexture(GL_TEXTURE_2D, textureID);
+    unsigned char data[] = { 255, 0, 0, 255, 30, 30, 30, 255 };
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    return textureID;
+}
+
+GLuint generateTexture(const char* imagePath, bool repeat = true) {
     Image img; if (!img.loadFromFile(imagePath)) cerr << "Failed to load texture: " << imagePath << endl;
     img.flipVertically();
     GLuint texture; glGenTextures(1, &texture); glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    // --- Â‰« «· €ÌÌ—: ‰Õœœ ≈–« ﬂ«‰  «·’Ê—… ”  ﬂ—— √„ ·« ---
+    if (repeat) {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }
+    else {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    }
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getSize().x, img.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.getPixelsPtr());
     return texture;
@@ -163,7 +126,7 @@ GLuint generateTexture(const char* imagePath) {
 
 int main() {
     ContextSettings ctxSettings; ctxSettings.minorVersion = 3; ctxSettings.majorVersion = 3; ctxSettings.depthBits = 24;
-    Window window(VideoMode({ WINDOW_WIDTH, WINDOW_HEIGHT }), "Colored Car", Style::Default, State::Windowed, ctxSettings);
+    Window window(VideoMode({ WINDOW_WIDTH, WINDOW_HEIGHT }), "Showroom Final", Style::Default, State::Windowed, ctxSettings);
     window.setActive(true);
     window.setMouseCursorVisible(false);
     window.setMouseCursorGrabbed(true);
@@ -178,24 +141,25 @@ int main() {
     GLuint cubemapTexture = loadCubemap(faces);
     ShaderProgram skyboxShader("shaders/skybox.vert", "shaders/skybox.frag");
 
-    // --- «·≈⁄œ«œ«  ---
     float groundLevel = 0.0f;
     float salonHalfWidth = 8.0f; float roomWidth = 20.0f; float totalLength = 40.0f; float height = 10.0f;
     float xFarRight = salonHalfWidth + roomWidth; float xFarLeft = -(salonHalfWidth + roomWidth);
     float zFront = totalLength; float zBack = -totalLength;
+    float garageGateWidth = 8.0f;
 
-    // --- »‰«¡ «·„⁄—÷ ---
-    // (‰” Œœ„ «·œ«·… «·ﬁœÌ„… ·‹ addQuad Â‰« ·√‰‰« ‰—Ìœ  ﬂ—«— «· ﬂ ‘—)
     auto addQuadRepeated = [&](vector<vec3>& p, vector<vec2>& u, vec3 p1, vec3 p2, vec3 p3, vec3 p4, float repeat) {
-        p.push_back(p1); p.push_back(p2); p.push_back(p4);
-        u.push_back({ 0.0f, 0.0f }); u.push_back({ repeat, 0.0f }); u.push_back({ 0.0f, repeat });
-        p.push_back(p2); p.push_back(p3); p.push_back(p4);
-        u.push_back({ repeat, 0.0f }); u.push_back({ repeat, repeat }); u.push_back({ 0.0f, repeat });
+        p.push_back(p1); p.push_back(p2); p.push_back(p4); u.push_back({ 0.0f, 0.0f }); u.push_back({ repeat, 0.0f }); u.push_back({ 0.0f, repeat });
+        p.push_back(p2); p.push_back(p3); p.push_back(p4); u.push_back({ repeat, 0.0f }); u.push_back({ repeat, repeat }); u.push_back({ 0.0f, repeat });
         };
 
     vector<vec3> outerFloorPos; vector<vec2> outerFloorUvs;
     addQuadRepeated(outerFloorPos, outerFloorUvs, { -2000.0f, groundLevel, 2000.0f }, { 2000.0f, groundLevel, 2000.0f }, { 2000.0f, groundLevel, -2000.0f }, { -2000.0f, groundLevel, -2000.0f }, 100.0f);
     Model outerFloorModel(outerFloorPos, outerFloorUvs);
+
+    vector<vec3> roadPos; vector<vec2> roadUvs;
+    float roadHeight = groundLevel + 0.02f;
+    addQuadRepeated(roadPos, roadUvs, { -garageGateWidth, roadHeight, zFront + 200.0f }, { garageGateWidth, roadHeight, zFront + 200.0f }, { garageGateWidth, roadHeight, zFront }, { -garageGateWidth, roadHeight, zFront }, 1.0f);
+    Model roadModel(roadPos, roadUvs);
 
     vector<vec3> innerFloorPos; vector<vec2> innerFloorUvs;
     float innerHeight = groundLevel + 0.01f;
@@ -208,7 +172,8 @@ int main() {
 
     vector<vec3> wallPos; vector<vec2> wallUvs;
     addQuadRepeated(wallPos, wallUvs, { xFarLeft, groundLevel, zBack }, { xFarRight, groundLevel, zBack }, { xFarRight, height, zBack }, { xFarLeft, height, zBack }, 1.0f);
-    addQuadRepeated(wallPos, wallUvs, { xFarLeft, groundLevel, zFront }, { xFarLeft, height, zFront }, { xFarRight, height, zFront }, { xFarRight, groundLevel, zFront }, 1.0f);
+    addQuadRepeated(wallPos, wallUvs, { xFarLeft, groundLevel, zFront }, { -garageGateWidth, groundLevel, zFront }, { -garageGateWidth, height, zFront }, { xFarLeft, height, zFront }, 1.0f);
+    addQuadRepeated(wallPos, wallUvs, { garageGateWidth, groundLevel, zFront }, { xFarRight, groundLevel, zFront }, { xFarRight, height, zFront }, { garageGateWidth, height, zFront }, 1.0f);
     addQuadRepeated(wallPos, wallUvs, { xFarLeft, groundLevel, zFront }, { xFarLeft, groundLevel, zBack }, { xFarLeft, height, zBack }, { xFarLeft, height, zFront }, 1.0f);
     addQuadRepeated(wallPos, wallUvs, { xFarRight, groundLevel, zBack }, { xFarRight, groundLevel, zFront }, { xFarRight, height, zFront }, { xFarRight, height, zBack }, 1.0f);
     addQuadRepeated(wallPos, wallUvs, { xFarLeft, groundLevel, 0.0f }, { -salonHalfWidth, groundLevel, 0.0f }, { -salonHalfWidth, height, 0.0f }, { xFarLeft, height, 0.0f }, 1.0f);
@@ -218,21 +183,33 @@ int main() {
     addQuadRepeated(wallPos, wallUvs, { -salonHalfWidth, groundLevel, -(doorZ - doorWidth / 2) }, { -salonHalfWidth, groundLevel, (doorZ - doorWidth / 2) }, { -salonHalfWidth, height, (doorZ - doorWidth / 2) }, { -salonHalfWidth, height, -(doorZ - doorWidth / 2) }, 1.0f);
     addQuadRepeated(wallPos, wallUvs, { -salonHalfWidth, groundLevel, (doorZ + doorWidth / 2) }, { -salonHalfWidth, groundLevel, zFront }, { -salonHalfWidth, height, zFront }, { -salonHalfWidth, height, (doorZ + doorWidth / 2) }, 1.0f);
     addQuadRepeated(wallPos, wallUvs, { salonHalfWidth, groundLevel, -(doorZ + doorWidth / 2) }, { salonHalfWidth, groundLevel, zBack }, { salonHalfWidth, height, zBack }, { salonHalfWidth, height, -(doorZ + doorWidth / 2) }, 1.0f);
-    addQuadRepeated(wallPos, wallUvs, { salonHalfWidth, groundLevel, (doorZ - doorWidth / 2) }, { salonHalfWidth, groundLevel, -(doorZ - doorWidth / 2) }, { salonHalfWidth, height, -(doorZ - doorWidth / 2) }, { salonHalfWidth, height, (doorZ - doorWidth / 2) }, 1.0f);
+    addQuadRepeated(wallPos, wallUvs, { salonHalfWidth, groundLevel, (doorZ - doorWidth / 2) }, { salonHalfWidth, groundLevel, -(doorZ - doorWidth / 2) }, { salonHalfWidth, height, -(doorZ - doorWidth / 2) }, { salonHalfWidth, height, -(doorZ - doorWidth / 2) }, 1.0f);
     addQuadRepeated(wallPos, wallUvs, { salonHalfWidth, groundLevel, zFront }, { salonHalfWidth, groundLevel, (doorZ + doorWidth / 2) }, { salonHalfWidth, height, (doorZ + doorWidth / 2) }, { salonHalfWidth, height, zFront }, 1.0f);
     Model wallsModel(wallPos, wallUvs);
 
-    // --- »‰«¡ «·”Ì«—… »—„ÃÌ« ---
+    vector<vec3> doorPos; vector<vec2> doorUvs;
+    addQuadRepeated(doorPos, doorUvs, { -garageGateWidth, 0.0f, 0.0f }, { garageGateWidth, 0.0f, 0.0f }, { garageGateWidth, height, 0.0f }, { -garageGateWidth, height, 0.0f }, 1.0f);
+    Model garageDoorModel(doorPos, doorUvs);
+
+    vector<vec3> buttonPos; vector<vec2> buttonUvs;
+    addBox(buttonPos, buttonUvs, vec3(0), vec3(0.5f), { 0,0 }, { 1,1 });
+    Model buttonModel(buttonPos, buttonUvs);
+    vec3 buttonPositionOutside = vec3(garageGateWidth + 0.5f, 2.0f, zFront);
+    // ---  ⁄œÌ· „Êﬁ⁄ «·“— «·œ«Œ·Ì ---
+    vec3 buttonPositionInside = vec3(-garageGateWidth - 0.5f, 2.0f, zFront - 0.5f);
+
     Model carModel = createCarModel();
 
-    // ---  Õ„Ì· «·’Ê— ---
     GLuint texInnerFloor = generateTexture("floor.jpeg");
-    GLuint texOuterFloor = generateTexture("grass.jpg");
+    GLuint texOuterFloor = generateTexture("grass2.jpeg");
     GLuint texWall = generateTexture("wall.jpeg");
     GLuint texCeiling = generateTexture("ceiling2.jpeg");
-
-    // ’Ê—… «·”Ì«—… «·„’‰Ê⁄… »—„ÃÌ« (√Õ„— Ê√”Êœ)
     GLuint texCar = createCarColorTexture();
+    GLuint texGarageDoor = generateTexture("garagedoor.jpeg");
+    GLuint texButton = createColorTexture(0, 0, 0);
+
+    // ---  ⁄œÌ·  Õ„Ì·  ﬂ ‘— «·ÿ—Ìﬁ ---
+    GLuint texRoad = generateTexture("road.jpeg", false); // false Ì⁄‰Ì ·«  ﬂ——
 
     ShaderProgram shaderProgram("shaders/shader.vert", "shaders/shader.frag");
     GLuint modelLoc = glGetUniformLocation(shaderProgram.getProgram(), "model");
@@ -249,12 +226,19 @@ int main() {
     float yaw = -90.0f; float pitch = 0.0f; float sensitivity = 0.1f;
     Clock clock; bool running = true;
     Mouse::setPosition(Vector2i(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), window);
-
     float carAngle = 0.0f;
+
+    float doorAnimationProgress = 0.0f;
+    int doorAnimationDirection = 0;
+    const float DOOR_ANIMATION_SPEED = 0.5f;
+    bool e_key_pressed_last_frame = false;
 
     while (running) {
         float deltaTime = clock.restart().asSeconds();
-        float cameraSpeed = 10.0f * deltaTime;
+        float moveSpeed = 10.0f;
+        if (Keyboard::isKeyPressed(Keyboard::Key::LShift)) moveSpeed *= 2.5f;
+        float cameraSpeed = moveSpeed * deltaTime;
+
         carAngle += deltaTime * 0.5f;
 
         while (const optional event = window.pollEvent()) {
@@ -283,9 +267,28 @@ int main() {
         if (Keyboard::isKeyPressed(Keyboard::Key::A)) cameraPosition -= normalize(cross(cameraFront, up)) * cameraSpeed;
         if (Keyboard::isKeyPressed(Keyboard::Key::D)) cameraPosition += normalize(cross(cameraFront, up)) * cameraSpeed;
         if (Keyboard::isKeyPressed(Keyboard::Key::Space)) cameraPosition += cameraSpeed * up;
-        if (Keyboard::isKeyPressed(Keyboard::Key::LShift)) cameraPosition -= cameraSpeed * up;
-
+        if (Keyboard::isKeyPressed(Keyboard::Key::LControl)) cameraPosition -= cameraSpeed * up;
         if (cameraPosition.y < groundLevel + playerHeight) cameraPosition.y = groundLevel + playerHeight;
+
+        bool e_key_currently_pressed = Keyboard::isKeyPressed(Keyboard::Key::E);
+        if (e_key_currently_pressed && !e_key_pressed_last_frame) {
+            float distOutside = distance(cameraPosition, buttonPositionOutside);
+            float distInside = distance(cameraPosition, buttonPositionInside);
+
+            if ((distOutside < 4.0f || distInside < 4.0f) && doorAnimationDirection == 0) {
+                if (doorAnimationProgress < 0.5f) doorAnimationDirection = 1;
+                else doorAnimationDirection = -1;
+            }
+        }
+        e_key_pressed_last_frame = e_key_currently_pressed;
+
+        if (doorAnimationDirection != 0) {
+            doorAnimationProgress += doorAnimationDirection * DOOR_ANIMATION_SPEED * deltaTime;
+            doorAnimationProgress = glm::clamp(doorAnimationProgress, 0.0f, 1.0f);
+            if (doorAnimationProgress <= 0.0f || doorAnimationProgress >= 1.0f) {
+                doorAnimationDirection = 0;
+            }
+        }
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -295,20 +298,51 @@ int main() {
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &viewMatrix[0][0]);
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, &perspectiveMatrix[0][0]);
 
-        // —”„ «·„⁄—÷
         mat4 modelMatrix = mat4(1.0f);
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &modelMatrix[0][0]);
         glBindTexture(GL_TEXTURE_2D, texOuterFloor); outerFloorModel.draw();
+
+        // —”„ «·ÿ—Ìﬁ
+        glBindTexture(GL_TEXTURE_2D, texRoad); roadModel.draw();
+
         glBindTexture(GL_TEXTURE_2D, texInnerFloor); innerFloorModel.draw();
         glBindTexture(GL_TEXTURE_2D, texWall); wallsModel.draw();
         glBindTexture(GL_TEXTURE_2D, texCeiling); ceilingModel.draw();
 
-        // —”„ «·”Ì«—… «·„·Ê‰…
-        mat4 carMatrix = mat4(1.0f);
-        carMatrix = translate(carMatrix, vec3(18.0f, groundLevel, 20.0f));
-        carMatrix = rotate(carMatrix, carAngle, vec3(0.0f, 1.0f, 0.0f));
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &carMatrix[0][0]);
+        // —”„ «·√“—«—
+        glBindTexture(GL_TEXTURE_2D, texButton);
+        mat4 buttonMatrixOut = translate(mat4(1.0f), buttonPositionOutside);
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &buttonMatrixOut[0][0]);
+        buttonModel.draw();
+        mat4 buttonMatrixIn = translate(mat4(1.0f), buttonPositionInside);
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &buttonMatrixIn[0][0]);
+        buttonModel.draw();
+
+        float doorYOffset = doorAnimationProgress * height;
+        mat4 doorMatrix = translate(mat4(1.0f), vec3(0.0f, doorYOffset, zFront));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &doorMatrix[0][0]);
+        glBindTexture(GL_TEXTURE_2D, texGarageDoor);
+        garageDoorModel.draw();
+
         glBindTexture(GL_TEXTURE_2D, texCar);
+        mat4 car1 = translate(mat4(1.0f), vec3(18.0f, groundLevel, 20.0f));
+        car1 = glm::rotate(car1, carAngle, vec3(0.0f, 1.0f, 0.0f));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &car1[0][0]);
+        carModel.draw();
+
+        mat4 car2 = translate(mat4(1.0f), vec3(-18.0f, groundLevel, 20.0f));
+        car2 = glm::rotate(car2, -carAngle, vec3(0.0f, 1.0f, 0.0f));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &car2[0][0]);
+        carModel.draw();
+
+        mat4 car3 = translate(mat4(1.0f), vec3(18.0f, groundLevel, -20.0f));
+        car3 = glm::rotate(car3, glm::radians(45.0f), vec3(0.0f, 1.0f, 0.0f));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &car3[0][0]);
+        carModel.draw();
+
+        mat4 car4 = translate(mat4(1.0f), vec3(-18.0f, groundLevel, -20.0f));
+        car4 = glm::rotate(car4, glm::radians(-45.0f), vec3(0.0f, 1.0f, 0.0f));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &car4[0][0]);
         carModel.draw();
 
         glDepthFunc(GL_LEQUAL);
